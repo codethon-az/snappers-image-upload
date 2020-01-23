@@ -42,6 +42,7 @@ namespace ImageUploadAPI.Controllers
         public async Task<UploadResponse> Upload(ICollection<IFormFile> requestFiles)
         {
             bool isUploaded = false;
+            string uri = "";
 
             //try
             //{
@@ -87,7 +88,7 @@ namespace ImageUploadAPI.Controllers
                         {
                             using (Stream stream = formFile.OpenReadStream())
                             {
-                                isUploaded = await StorageHelper.UploadFileToStorage(stream, formFile.FileName, storageConfig);
+                                uri = await StorageHelper.UploadFileToStorage(stream, formFile.FileName, storageConfig);
                             }
                         }
                     }
@@ -97,9 +98,9 @@ namespace ImageUploadAPI.Controllers
                     }
                 }
 
-                if (isUploaded)
+                if (!string.IsNullOrWhiteSpace(uri))
                 {
-                   return new UploadResponse("Woohoo!");
+                   return new UploadResponse("success", uri);
                 }
                 else
 
@@ -110,6 +111,7 @@ namespace ImageUploadAPI.Controllers
             catch (Exception ex)
             {
                 return new UploadResponse(ex.Message);
+
             }
         }
 

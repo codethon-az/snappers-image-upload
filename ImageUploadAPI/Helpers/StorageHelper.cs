@@ -28,7 +28,7 @@ namespace ImageUploadAPI.Helpers
             return formats.Any(item => file.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
         }
 
-        public static async Task<bool> UploadFileToStorage(Stream fileStream, string fileName, AzureStorageConfig _storageConfig)
+        public static async Task<string> UploadFileToStorage(Stream fileStream, string fileName, AzureStorageConfig _storageConfig)
         {
             // Create storagecredentials object by reading the values from the configuration (appsettings.json)
             StorageCredentials storageCredentials = new StorageCredentials(_storageConfig.AccountName, _storageConfig.AccountKey);
@@ -47,8 +47,10 @@ namespace ImageUploadAPI.Helpers
 
             // Upload the file
             await blockBlob.UploadFromStreamAsync(fileStream);
+            var uri = blockBlob.Uri.AbsoluteUri;
 
-            return await Task.FromResult(true);
+            return await Task.FromResult(uri);
+            //return await Task.FromResult(true);
         }
     }
 }
